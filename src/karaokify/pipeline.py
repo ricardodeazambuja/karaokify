@@ -83,11 +83,14 @@ def process_one(input_path: Path, opts: Options) -> dict:
             )
 
         if output.exists() and not opts.overwrite:
+            log.info("skipped %s — output already exists: %s (use --overwrite to redo)",
+                     input_path.name, output)
             return manifest.make_result(
                 input_path, output, "skipped",
                 reason="output exists (use --overwrite)", **common,
             )
         if opts.dry_run:
+            log.info("planned %s -> %s", input_path.name, output)
             return manifest.make_result(input_path, output, "planned", **common)
 
         log.info("processing %s", input_path.name)
