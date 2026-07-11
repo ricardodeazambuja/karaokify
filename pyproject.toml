@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "karaokify"
+dynamic = ["version"]
+description = "Remove or attenuate vocals from any audio/video file with one command (Demucs + ffmpeg)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Ricardo de Azambuja" }]
+keywords = ["karaoke", "demucs", "vocal-removal", "source-separation", "ffmpeg"]
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Sound/Audio",
+]
+dependencies = [
+    "demucs>=4.1",
+    "torch",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "jsonschema"]
+
+[project.scripts]
+karaokify = "karaokify.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "karaokify.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+karaokify = ["schema.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "slow: end-to-end tests that run Demucs separation (may download model weights)",
+]

@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "karaokify --json result document",
+  "type": "object",
+  "required": ["version", "results", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string" },
+    "error": {
+      "type": "string",
+      "description": "Present only on environment errors (exit code 3); results is then empty."
+    },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/result" }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["processed", "skipped", "failed", "planned"],
+      "additionalProperties": false,
+      "properties": {
+        "processed": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "planned": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "definitions": {
+    "result": {
+      "type": "object",
+      "required": [
+        "input", "output", "action", "model", "device",
+        "stems", "timings", "input_duration_s", "output_size_bytes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "input": { "type": "string" },
+        "output": {
+          "type": ["string", "null"],
+          "description": "Resolved output path; null when the input failed before resolution."
+        },
+        "action": { "enum": ["processed", "skipped", "failed", "planned"] },
+        "reason": {
+          "type": "string",
+          "description": "Present for skipped and failed results."
+        },
+        "model": { "type": ["string", "null"] },
+        "device": { "type": ["string", "null"] },
+        "stems": {
+          "type": ["object", "null"],
+          "description": "Output mix: stem name -> gain in dB; null gain = dropped (-inf).",
+          "additionalProperties": { "type": ["number", "null"] }
+        },
+        "timings": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "probe_s": { "type": "number", "minimum": 0 },
+            "separate_s": { "type": "number", "minimum": 0 },
+            "remux_s": { "type": "number", "minimum": 0 },
+            "total_s": { "type": "number", "minimum": 0 }
+          }
+        },
+        "input_duration_s": { "type": ["number", "null"], "minimum": 0 },
+        "output_size_bytes": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    }
+  }
+}

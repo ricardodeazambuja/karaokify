@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+
+# local media kept out of the repo
+*.mp4
+*.mp3
+*.m4a
+*.mkv
+*.wav
+*.jsonl
