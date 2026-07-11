@@ -1,3 +1,5 @@
+<img width="947" height="330" alt="image" src="https://github.com/user-attachments/assets/8a1bfadf-cc14-4d75-9843-fe3d65a2221f" />
+
 # karaokify
 
 Remove (or attenuate) vocals from any audio/video file, locally, with one command.
