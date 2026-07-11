@@ -10,7 +10,48 @@ Wraps [Demucs](https://github.com/adefossez/demucs) (source separation) + ffmpeg
 karaokify video.mp4          # -> "video (no vocals).mp4" next to the input
 ```
 
+## Why not just demucs?
+
+Demucs separates; karaokify finishes the job. Running `demucs song.mp4` leaves you
+with a `separated/<model>/<track>/` folder of stem wavs — you still have to mix the
+stems you want back together and, for video, remux the result yourself. Karaokify
+does the whole pipeline in one command:
+
+- **Mixdown built in** — pick stems and gains (`--vocals-gain -18`, `--keep drums`,
+  `--gain bass=6`) instead of hand-writing an ffmpeg `amix` filter.
+- **Video in, video out** — audio is demuxed, separated, and remuxed back into the
+  original container with the video stream copied untouched (`-c:v copy`).
+- **Sane outputs** — one file next to the input (`"song (no vocals).mp4"`), not a
+  tree of wavs.
+- **Automation-friendly** — `--json` output with a published schema, meaningful exit
+  codes, `--dry-run`, idempotent `--skip-existing`, and a JSONL `--manifest`
+  (see [Agent contract](#agent-contract-normative)).
+
+If all you want is the raw stems, use demucs directly (or `karaokify --save-stems`).
+
 ## Install
+
+### Run without installing (uv)
+
+If you have [uv](https://docs.astral.sh/uv/), you can run karaokify straight from
+this repository — no clone, no venv:
+
+```bash
+uvx --from git+https://github.com/ricardodeazambuja/karaokify karaokify song.mp4
+```
+
+The first invocation resolves demucs + torch into uv's cache (on Linux that means
+the CUDA build of torch, a multi-GB download); later runs start instantly. To pull
+the much smaller CPU-only torch instead:
+
+```bash
+uvx --index https://download.pytorch.org/whl/cpu \
+    --from git+https://github.com/ricardodeazambuja/karaokify karaokify song.mp4 --device cpu
+```
+
+`ffmpeg`/`ffprobe` must still be on PATH (see below).
+
+### Install into an existing env (pip)
 
 Demucs pulls a large torch. **Reuse an existing torch install** instead of letting
 pip download ~3 GB:
